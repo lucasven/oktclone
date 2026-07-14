@@ -1,0 +1,14 @@
+{
+  "name": "oktclone-root",
+  "private": true,
+  "scripts": {
+    "dup": "jscpd",
+    "hooks": "lefthook install"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^19.8.1",
+    "@commitlint/config-conventional": "^19.8.1",
+    "jscpd": "^4.0.5",
+    "lefthook": "^1.11.14"
+  }
+}

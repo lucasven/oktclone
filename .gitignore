@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.mypy_cache/
+.pytest_cache/
+.ruff_cache/
+htmlcov/
+.coverage
+.coverage.*
+mutants/
+.mutmut-cache
+
+# Node
+node_modules/
+dist/
+coverage/
+reports/
+.stryker-tmp/
+
+# Env / OS / editors
+.env
+.env.local
+.DS_Store
+.idea/
+.vscode/

@@ -1,0 +1,100 @@
+[project]
+name = "oktclone"
+version = "0.1.0"
+requires-python = ">=3.13"
+dependencies = [
+    "django>=5.2,<6",
+    "django-environ>=0.14.0",
+    "djangorestframework>=3.17.1",
+    "psycopg[binary]>=3.3.4",
+]
+
+[dependency-groups]
+dev = [
+    "django-stubs>=6.0.7",
+    "djangorestframework-stubs>=3.17.0",
+    "mutmut>=3.6.0",
+    "mypy>=2.3.0",
+    "pytest>=9.1.1",
+    "pytest-cov>=7.1.0",
+    "pytest-django>=4.12.0",
+    "ruff>=0.15.21",
+    "xenon>=0.9.3",
+]
+
+[tool.ruff]
+line-length = 100
+target-version = "py313"
+
+[tool.ruff.lint]
+select = [
+    "E",    # pycodestyle errors
+    "W",    # pycodestyle warnings
+    "F",    # pyflakes
+    "I",    # isort
+    "N",    # pep8-naming
+    "UP",   # pyupgrade
+    "B",    # bugbear
+    "C4",   # comprehensions
+    "C90",  # mccabe complexity
+    "SIM",  # simplify
+    "DJ",   # django
+    "PL",   # pylint (includes too-many-* complexity rules)
+    "RUF",
+]
+ignore = [
+    "RUF012",  # Django idiom: mutable class attributes on Meta/admin classes
+]
+
+[tool.ruff.lint.mccabe]
+max-complexity = 10
+
+[tool.ruff.lint.per-file-ignores]
+"**/tests/**" = ["PLR2004"]  # magic values are fine in assertions
+"manage.py" = ["PLC0415"]    # Django's generated deferred import
+
+[tool.mypy]
+strict = true
+plugins = ["mypy_django_plugin.main", "mypy_drf_plugin.main"]
+exclude = ["^mutants/"]
+
+[tool.django-stubs]
+django_settings_module = "oktclone.settings"
+
+[[tool.mypy.overrides]]
+module = ["environ"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+DJANGO_SETTINGS_MODULE = "oktclone.settings"
+# Without this, pytest-django walks up from rootdir, finds backend/manage.py
+# and puts the ORIGINAL backend/ ahead of mutmut's mutants/ on sys.path,
+# silently mutation-testing nothing. pythonpath (relative to rootdir) restores
+# imports for normal runs and resolves to mutants/ inside the mutmut sandbox.
+django_find_project = false
+pythonpath = ["."]
+testpaths = ["tests"]
+# --cov is passed explicitly by hooks/CI (see lefthook.yml) rather than via
+# addopts: mutmut runs pytest against mutated copies where the coverage gate
+# would misfire.
+
+[tool.coverage.run]
+# Do NOT set `source` here: mutmut's internal coverage collection would be
+# filtered out and it could no longer map tests to mutants. Sources are
+# passed as --cov=core --cov=oktclone in lefthook.yml instead.
+branch = true
+omit = [
+    "*/migrations/*",
+    "oktclone/asgi.py",
+    "oktclone/wsgi.py",
+    "manage.py",
+]
+
+[tool.coverage.report]
+fail_under = 80
+show_missing = true
+
+[tool.mutmut]
+source_paths = ["core"]
+also_copy = ["oktclone/", "tests/", "conftest.py"]
+pytest_add_cli_args_test_selection = ["tests"]

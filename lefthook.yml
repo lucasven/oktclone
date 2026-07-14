@@ -1,0 +1,53 @@
+# Fast checks on commit (staged files only), thorough checks on push.
+# Mutation testing is intentionally NOT here: run `make mutate` (backend)
+# or `pnpm mutate` (frontend) manually / in CI.
+
+pre-commit:
+  parallel: true
+  commands:
+    ruff-lint:
+      root: backend/
+      glob: "*.py"
+      run: uv run ruff check --fix {staged_files}
+      stage_fixed: true
+    ruff-format:
+      root: backend/
+      glob: "*.py"
+      run: uv run ruff format {staged_files}
+      stage_fixed: true
+    eslint:
+      root: frontend/
+      glob: "*.{ts,tsx}"
+      run: pnpm exec eslint --fix --max-warnings 0 {staged_files}
+      stage_fixed: true
+    prettier:
+      root: frontend/
+      glob: "*.{ts,tsx,css,json}"
+      run: pnpm exec prettier --write {staged_files}
+      stage_fixed: true
+
+commit-msg:
+  commands:
+    commitlint:
+      run: pnpm exec commitlint --edit {1}
+
+# pre-push commands are whole-project gates. Deliberately NO `root:` option:
+# root makes lefthook filter {push_files} by prefix and skip the command when
+# a push touches nothing under it — these checks must always run.
+pre-push:
+  parallel: true
+  commands:
+    mypy:
+      run: cd backend && uv run mypy .
+    xenon:
+      run: cd backend && uv run xenon --max-absolute B --max-modules A --max-average A core oktclone
+    pytest:
+      run: cd backend && uv run pytest --cov=core --cov=oktclone --cov-report=term-missing
+    tsc:
+      run: cd frontend && pnpm exec tsc -b
+    eslint-all:
+      run: cd frontend && pnpm exec eslint --max-warnings 0 src
+    vitest:
+      run: cd frontend && pnpm exec vitest run --coverage
+    jscpd:
+      run: pnpm exec jscpd
