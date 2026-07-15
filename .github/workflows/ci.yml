@@ -16,8 +16,8 @@ jobs:
       run:
         working-directory: backend
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v6
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v8.3.2
         with:
           enable-cache: true
           cache-dependency-glob: backend/uv.lock
@@ -28,9 +28,9 @@ jobs:
       - name: Type check (mypy)
         run: uv run mypy .
       - name: Complexity (xenon)
-        run: uv run xenon --max-absolute B --max-modules A --max-average A core oktclone
+        run: uv run xenon --max-absolute B --max-modules A --max-average A core oktclone accounts profiles
       - name: Tests with coverage gate
-        run: uv run pytest --cov=core --cov=oktclone --cov-report=term-missing
+        run: uv run pytest --cov=core --cov=oktclone --cov=accounts --cov=profiles --cov-report=term-missing
 
   backend-mutation:
     runs-on: ubuntu-latest
@@ -38,14 +38,14 @@ jobs:
       run:
         working-directory: backend
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v6
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v8.3.2
         with:
           enable-cache: true
           cache-dependency-glob: backend/uv.lock
       - name: Install dependencies
         run: uv sync --frozen
-      - name: Mutation testing gate (mutmut, min 60%)
+      - name: Mutation testing gate (mutmut, min 90%)
         run: |
           uv run mutmut run
           uv run python scripts/mutation_gate.py
@@ -56,13 +56,13 @@ jobs:
       run:
         working-directory: frontend
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
         with:
           version: 10
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
-          node-version: 20
+          node-version: 24
           cache: pnpm
           cache-dependency-path: frontend/pnpm-lock.yaml
       - name: Install dependencies
@@ -82,32 +82,32 @@ jobs:
       run:
         working-directory: frontend
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+      - uses: actions/checkout@v7
+      - uses: pnpm/action-setup@v6
         with:
           version: 10
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
-          node-version: 20
+          node-version: 24
           cache: pnpm
           cache-dependency-path: frontend/pnpm-lock.yaml
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
-      - name: Mutation testing gate (Stryker, break 60%)
+      - name: Mutation testing gate (Stryker, break 85%)
         run: pnpm run mutate
 
   repo-checks:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      - uses: pnpm/action-setup@v4
+      - uses: pnpm/action-setup@v6
         with:
           version: 10
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
-          node-version: 20
+          node-version: 24
           cache: pnpm
           cache-dependency-path: pnpm-lock.yaml
       - name: Install root tooling

@@ -29,7 +29,7 @@ cd frontend && pnpm dev                                     # SPA on :5173 (prox
 | pre-commit | Ruff (lint+format) on staged Python; ESLint + Prettier on staged TS. Auto-fixes are re-staged. |
 | commit-msg | Conventional Commits (commitlint) |
 | pre-push | mypy, Xenon (complexity), pytest (coverage ≥ 80%), tsc, ESLint, Vitest (coverage ≥ 80%), jscpd (duplication) |
-| manual / CI | Mutation testing: `make mutate` (backend, mutmut), `pnpm mutate` (frontend, Stryker) — both gate at 60% score |
+| manual / CI | Mutation testing: `make mutate` (backend, mutmut, gate 90%), `pnpm mutate` (frontend, Stryker, gate 85%) |
 
 Backend: `make check` runs lint + typecheck + complexity + tests.
 Frontend: `pnpm lint / typecheck / test / format`.

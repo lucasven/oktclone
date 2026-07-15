@@ -4,6 +4,7 @@ version = "0.1.0"
 requires-python = ">=3.13"
 dependencies = [
     "django>=5.2,<6",
+    "django-allauth[socialaccount]>=65.18.0",
     "django-environ>=0.14.0",
     "djangorestframework>=3.17.1",
     "psycopg[binary]>=3.3.4",
@@ -50,8 +51,9 @@ ignore = [
 max-complexity = 10
 
 [tool.ruff.lint.per-file-ignores]
-"**/tests/**" = ["PLR2004"]  # magic values are fine in assertions
-"manage.py" = ["PLC0415"]    # Django's generated deferred import
+"**/tests/**" = ["PLR2004"]       # magic values are fine in assertions
+"manage.py" = ["PLC0415"]         # Django's generated deferred import
+"**/migrations/**" = ["E501"]     # generated code; long help_text lines are Django's
 
 [tool.mypy]
 strict = true
@@ -62,11 +64,11 @@ exclude = ["^mutants/"]
 django_settings_module = "oktclone.settings"
 
 [[tool.mypy.overrides]]
-module = ["environ"]
+module = ["environ", "allauth.*"]
 ignore_missing_imports = true
 
 [tool.pytest.ini_options]
-DJANGO_SETTINGS_MODULE = "oktclone.settings"
+DJANGO_SETTINGS_MODULE = "oktclone.settings_test"
 # Without this, pytest-django walks up from rootdir, finds backend/manage.py
 # and puts the ORIGINAL backend/ ahead of mutmut's mutants/ on sys.path,
 # silently mutation-testing nothing. pythonpath (relative to rootdir) restores
@@ -95,6 +97,6 @@ fail_under = 80
 show_missing = true
 
 [tool.mutmut]
-source_paths = ["core"]
+source_paths = ["core", "accounts", "profiles"]
 also_copy = ["oktclone/", "tests/", "conftest.py"]
 pytest_add_cli_args_test_selection = ["tests"]

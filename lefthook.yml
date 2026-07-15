@@ -40,9 +40,9 @@ pre-push:
     mypy:
       run: cd backend && uv run mypy .
     xenon:
-      run: cd backend && uv run xenon --max-absolute B --max-modules A --max-average A core oktclone
+      run: cd backend && uv run xenon --max-absolute B --max-modules A --max-average A core oktclone accounts profiles
     pytest:
-      run: cd backend && uv run pytest --cov=core --cov=oktclone --cov-report=term-missing
+      run: cd backend && uv run pytest --cov=core --cov=oktclone --cov=accounts --cov=profiles --cov-report=term-missing
     tsc:
       run: cd frontend && pnpm exec tsc -b
     eslint-all:

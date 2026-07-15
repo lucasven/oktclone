@@ -1,6 +1,9 @@
 {
   "name": "oktclone-root",
   "private": true,
+  "engines": {
+    "node": ">=24"
+  },
   "scripts": {
     "dup": "jscpd",
     "hooks": "lefthook install"

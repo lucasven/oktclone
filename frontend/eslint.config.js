@@ -34,6 +34,7 @@ export default tseslint.config(
     files: ['**/*.test.{ts,tsx}'],
     rules: {
       'sonarjs/no-duplicate-string': 'off',
+      'sonarjs/no-hardcoded-passwords': 'off',
     },
   },
 )

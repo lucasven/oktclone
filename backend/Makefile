@@ -4,7 +4,7 @@ dev:
 	uv run python manage.py runserver
 
 test:
-	uv run pytest --cov=core --cov=oktclone --cov-report=term-missing
+	uv run pytest --cov=core --cov=oktclone --cov=accounts --cov=profiles --cov-report=term-missing
 
 lint:
 	uv run ruff check . && uv run ruff format --check .
@@ -13,7 +13,7 @@ typecheck:
 	uv run mypy .
 
 complexity:
-	uv run xenon --max-absolute B --max-modules A --max-average A core oktclone
+	uv run xenon --max-absolute B --max-modules A --max-average A core oktclone accounts profiles
 
 mutate:
 	uv run mutmut run
