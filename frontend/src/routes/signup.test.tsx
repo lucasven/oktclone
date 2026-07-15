@@ -78,6 +78,30 @@ describe('SignupPage', () => {
     expect(screen.queryByText('home page')).not.toBeInTheDocument()
   })
 
+  it('never shows the pending message before or after a failed submit', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue(
+        new Response(
+          JSON.stringify({
+            status: 400,
+            errors: [{ message: 'Password is too short.', code: 'short', param: 'password' }],
+          }),
+          { status: 400 },
+        ),
+      ),
+    )
+    renderSignup()
+
+    expect(await screen.findByLabelText('Email')).toBeInTheDocument()
+    expect(screen.queryByText('Check your email to confirm your account.')).not.toBeInTheDocument()
+
+    await submitCredentials()
+
+    expect(await screen.findByText('Password is too short.')).toBeInTheDocument()
+    expect(screen.queryByText('Check your email to confirm your account.')).not.toBeInTheDocument()
+  })
+
   it('shows field errors from the API', async () => {
     vi.stubGlobal(
       'fetch',

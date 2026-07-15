@@ -7,7 +7,7 @@ import re
 import subprocess
 import sys
 
-MIN_SCORE = 60.0
+MIN_SCORE = 90.0
 
 IGNORED_OUTCOMES = {"skipped", "not checked"}
 

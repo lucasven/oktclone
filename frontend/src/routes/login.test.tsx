@@ -109,6 +109,44 @@ describe('LoginPage', () => {
     expect(await screen.findByRole('alert')).toHaveTextContent('Invalid credentials.')
   })
 
+  it('starts with empty credential fields', async () => {
+    vi.stubGlobal('fetch', vi.fn())
+    renderLogin()
+    expect(await screen.findByLabelText('Email')).toHaveValue('')
+    expect(screen.getByLabelText('Password')).toHaveValue('')
+  })
+
+  it('disables submit while in flight and re-enables it after a failure', async () => {
+    let resolveFetch!: (response: Response) => void
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockReturnValue(
+        new Promise<Response>((resolve) => {
+          resolveFetch = resolve
+        }),
+      ),
+    )
+    renderLogin()
+
+    await submitCredentials()
+
+    const button = screen.getByRole('button', { name: /log in/ })
+    expect(button).toBeDisabled()
+
+    resolveFetch(
+      new Response(
+        JSON.stringify({
+          status: 400,
+          errors: [{ message: 'Invalid credentials.', code: 'invalid' }],
+        }),
+        { status: 400 },
+      ),
+    )
+    await waitFor(() => {
+      expect(button).toBeEnabled()
+    })
+  })
+
   it('starts the Google flow from the secondary button', async () => {
     vi.stubGlobal('fetch', vi.fn())
     const submit = vi.spyOn(HTMLFormElement.prototype, 'submit').mockImplementation(() => {

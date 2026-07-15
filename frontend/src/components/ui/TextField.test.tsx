@@ -35,7 +35,12 @@ describe('TextField', () => {
   })
 
   it('renders no error element when error is absent', () => {
-    render(<TextField label="Email" name="email" value="" onChange={vi.fn()} />)
-    expect(screen.getByLabelText('Email')).not.toHaveAttribute('aria-invalid')
+    const { container } = render(
+      <TextField label="Email" name="email" value="" onChange={vi.fn()} />,
+    )
+    const input = screen.getByLabelText('Email')
+    expect(input).not.toHaveAttribute('aria-invalid')
+    expect(input).not.toHaveAttribute('aria-describedby')
+    expect(container.querySelector('.field-error')).toBeNull()
   })
 })
